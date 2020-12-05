@@ -48,4 +48,7 @@ def Part2():
     seatList = [i for i in seatList if i-1 not in seatList and i+1 not in seatList] 
     print(seatList)
 
+import time
+start_time = time.time()
 Part2()
+print("--- %s seconds ---" % (time.time() - start_time))
