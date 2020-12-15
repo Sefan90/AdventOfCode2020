@@ -49,8 +49,7 @@ def Part2():
                 combi = []
                 for fo in range(1,len(foundx)+1):
                     combi += [sum(x) for x in itertools.combinations(foundx, fo)]
-                if 1 in combi:
-                    mem[str(ones)] = value
+                mem[str(ones)] = value
                 for c in range(len(combi)):
                     mem[str(combi[c]+ones)] = value
     result = 0
