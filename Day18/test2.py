@@ -17,7 +17,7 @@ def func(lista):
     return int(lista[0])
 
 def Part2():
-    f = open("input.txt","r")
+    f = open("testinput.txt","r")
     inputlist = [[i for i in r.replace(" ","").strip()] for r in f.readlines()]
     print(inputlist)
     summa = 0

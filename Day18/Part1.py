@@ -13,8 +13,8 @@ def rec(i,row):
                 summa += tmp
             else:
                 summa *= tmp
-            lastitem = "" #lastitem[:-2]
-        elif summa == 0: #and row[i].isnumeric() #and len(lastitem) <= 1: #Kanske fel
+            lastitem = ""
+        elif summa == 0:
             summa = int(row[i])
             lastitem = ""
         else:
