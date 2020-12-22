@@ -1,6 +1,6 @@
 import collections
 import copy
-file = open("testinput.txt","r").readlines()
+file = open("input.txt","r").readlines()
 player1 = []
 player2 = []
 nextplayer = False
@@ -12,7 +12,7 @@ def rec(deck1, deck2):
     player1hands = []
     player2hands = []
     while len(deck1) != 0 and len(deck2) != 0:
-        
+        if deck1 in player1hands and deck2 in player2hands:
             return "p1"
         player1hands.append(copy.deepcopy(deck1))
         player2hands.append(copy.deepcopy(deck2))
