@@ -1,5 +1,5 @@
 import collections
-file = open("input.txt","r").readlines()
+file = open("testinput.txt","r").readlines()
 tiledict = {}
 matchdict = collections.defaultdict(list)
 currentkey = ""
@@ -50,14 +50,46 @@ print(summa)
 print(matchdict[currentTile])
 
 image = tiledict[currentTile]["I"]
+imagerow = 0
 tilelist = []
 while currentTile not in tilelist:
     tilelist.append(currentTile)
-    lastitem = []
-    for item in matchdict[currentTile]:
-        if item[0] == "R":
-            lastitem = item
+    lastitem = currentTile
+    goright = True
+    godown = False
+    while currentTile == lastitem:
+        for item in matchdict[currentTile]:
+            if item[1] not in tilelist:
+                print(item)
+                if item[0] == "R": 
+                    currentTile = item[1]
+                    tmprow = imagerow
+                    for t in tiledict[currentTile]["I"]:
+                        image[tmprow] += " " + t
+                        tmprow += 1
+                elif item[0] == "T":
+                    godown = False
+                    currentTile = item[1]
+                    tmprow = imagerow
+                    for t in tiledict[currentTile]["I"]:
+                        image[tmprow] += " " + t
+                        tmprow += 1
+                elif item[0] == "B":
+                    godown = False
+                    currentTile = item[1]
+                    tmprow = imagerow
+                    for t in tiledict[currentTile]["I"]:
+                        image[tmprow] += " " + t
+                        tmprow += 1
+                elif item[0] == "L":
+                    godown = False
+                    currentTile = item[1]
+                    tmprow = imagerow
+                    for t in tiledict[currentTile]["I"]:
+                        image[tmprow] += " " + t
+                        tmprow += 1
+            else:
+                break
 
-
-
-print(image)
+for i in image:
+    print(i)
