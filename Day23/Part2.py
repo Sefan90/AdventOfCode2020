@@ -1,51 +1,42 @@
-def cupstomove(cups,currentindex):
-    #cups[currentindex+1:currentindex+4]
-    tmp = []
-    for i in range(currentindex+1,currentindex+4):
-        if i >= len(cups):
-            tmp.append(cups[i-len(cups)])
-        else:
-            tmp.append(cups[i])
-    return tmp
+data = open("input.txt").read()
 
-def findnewcup(cups,currentcup):
-    for c in range(1,len(cups)):
-        tmp = currentcup - c
-        if tmp < 1:
-            tmp += max(cups)
-        if tmp in cups:
-            currentcup = tmp
-            currentindex = cups.index(currentcup)
+clock = [int(i) for i in data]
+for x in range(max(clock) + 1, 1000000 + 1):
+    clock.append(x)
+first = clock[0]
+last = clock[-1]
+clock_dict = {clock[k-1]:clock[k] for k in range(1, len(clock))}
+clock_dict[last] = first
+# dict[key=current cup value] = value = next cup value
+
+curr_cup_key = first
+move = 1
+
+for _ in range(10000000):
+    pick_up = []
+    #Save pointer number for third ahead
+    third_pointer = clock_dict[clock_dict[clock_dict[clock_dict[curr_cup_key]]]]
+    #Save a list of our values so we can make sure to not jump to those
+    tmp_lista = [clock_dict[curr_cup_key],clock_dict[clock_dict[curr_cup_key]],clock_dict[clock_dict[clock_dict[curr_cup_key]]]]
+    #Save pointer for the value our number is headed, make sure our number exists and is not in our lista
+    lookahead_key = 0
+    for counter in range(1,5):
+        tmp_key = curr_cup_key - counter
+        if tmp_key < 1:
+            tmp_key += len(clock)
+        if tmp_key not in tmp_lista:
+            lookahead_key = tmp_key
             break
-    return currentindex
+    lookahead_pointer = clock_dict[lookahead_key]
+    #Repoint headed number to start of our three
+    clock_dict[lookahead_key] = clock_dict[curr_cup_key]
+    #Repoint last of our three to our saved value
+    clock_dict[clock_dict[clock_dict[clock_dict[curr_cup_key]]]] = lookahead_pointer
+    #Repoint current to value of 3 ahead
+    clock_dict[curr_cup_key] = third_pointer
+    curr_cup_key = clock_dict[curr_cup_key]
 
-def part1():
-    file = open("input.txt","r").readlines()
-    cups = [[int(item) for item in row] for row in file][0]
-    cups += [i for i in range(max(cups)+1,1000000)]
-    currentcup = cups[0]
-    currentindex = 0
-    #print(cups)
-    #print(cups[:currentindex+1] + cups[currentindex+currentcup+1:])
-    #print(cups[currentindex+1:currentindex+currentcup+1])
-    for _ in range(10000000):
-        #print(cups)
-        cupsmoved = cupstomove(cups,currentindex)
-        tmplist = [c for c in cups if c not in cupsmoved]
-        #print(cupsmoved)
-        newpos = findnewcup(tmplist,currentcup)
-        cups = tmplist[:newpos+1] + cupsmoved + tmplist[newpos+1:]
-        newpos = cups.index(currentcup)
-        if newpos != currentindex:
-            cups = cups[newpos-currentindex:] + cups[:newpos-currentindex]
-        currentindex = (currentindex+1)%len(cups)
-        #print(currentindex)
-        currentcup = cups[currentindex]
-    
-    cups = cups[cups.index(1)+1:] + cups[:cups.index(1)]
-    output = ""
-    for c in cups:
-        output += str(c)
-    print(output)
-    
-part1()
+first = clock_dict[1]
+second = clock_dict[clock_dict[1]]
+
+print(first * second)
