@@ -1,42 +1,92 @@
-data = open("input.txt").read()
+#from collections import defaultdict
+from copy import deepcopy
 
-clock = [int(i) for i in data]
-for x in range(max(clock) + 1, 1000000 + 1):
-    clock.append(x)
-first = clock[0]
-last = clock[-1]
-clock_dict = {clock[k-1]:clock[k] for k in range(1, len(clock))}
-clock_dict[last] = first
-# dict[key=current cup value] = value = next cup value
+def flipper(floor, key, iswhite):
+    white = set()
+    blacktiles = 0
+    for x in [1,-1]:
+        for y in [0.5,-0.5]:
+            if str(key[0]+x)+","+str(key[1]+y) in floor.keys() and floor[str(key[0]+x)+","+str(key[1]+y)] == False:
+                blacktiles += 1
+            else:
+                white.add(str(key[0]+x)+","+str(key[1]+y))
+    
+    if str(key[0])+","+str(key[1]+1) in floor.keys() and floor[str(key[0])+","+str(key[1]+1)] == False:
+        blacktiles += 1
+    else:
+        white.add(str(key[0])+","+str(key[1]+1))
+    
+    if str(key[0])+","+str(key[1]-1) in floor.keys() and floor[str(key[0])+","+str(key[1]-1)] == False:
+        blacktiles += 1
+    else:
+        white.add(str(key[0])+","+str(key[1]-1))
+    
+    if iswhite == False:
+        if blacktiles == 0 or blacktiles > 2:
+            return True, white
+        else:
+            return False, white
+    else:
+        if blacktiles == 2:
+            return False
+        else:
+            return True
 
-curr_cup_key = first
-move = 1
+def part2():
+    file = open("input.txt","r").readlines()
+    rows = [row.strip() for row in file]
+    currentrow = 0
+    currentindex = 0
+    floor = {} #defaultdict(lambda: True)
+    floor["0.0,0.0"] = True
 
-for _ in range(10000000):
-    pick_up = []
-    #Save pointer number for third ahead
-    third_pointer = clock_dict[clock_dict[clock_dict[clock_dict[curr_cup_key]]]]
-    #Save a list of our values so we can make sure to not jump to those
-    tmp_lista = [clock_dict[curr_cup_key],clock_dict[clock_dict[curr_cup_key]],clock_dict[clock_dict[clock_dict[curr_cup_key]]]]
-    #Save pointer for the value our number is headed, make sure our number exists and is not in our lista
-    lookahead_key = 0
-    for counter in range(1,5):
-        tmp_key = curr_cup_key - counter
-        if tmp_key < 1:
-            tmp_key += len(clock)
-        if tmp_key not in tmp_lista:
-            lookahead_key = tmp_key
-            break
-    lookahead_pointer = clock_dict[lookahead_key]
-    #Repoint headed number to start of our three
-    clock_dict[lookahead_key] = clock_dict[curr_cup_key]
-    #Repoint last of our three to our saved value
-    clock_dict[clock_dict[clock_dict[clock_dict[curr_cup_key]]]] = lookahead_pointer
-    #Repoint current to value of 3 ahead
-    clock_dict[curr_cup_key] = third_pointer
-    curr_cup_key = clock_dict[curr_cup_key]
+    while currentrow < len(rows):
+        currrenttile = [0.0,0.0]
+        while currentindex < len(rows[currentrow]):
+            if rows[currentrow][currentindex] == "e":
+                currrenttile[1] -= 1.0
+                currentindex += 1
+            elif rows[currentrow][currentindex] == "w":
+                currrenttile[1] += 1.0
+                currentindex += 1
+            elif rows[currentrow][currentindex] == "s" and rows[currentrow][currentindex+1] == "e":
+                currrenttile[0] -= 1.0
+                currrenttile[1] -= 0.5
+                currentindex += 2
+            elif rows[currentrow][currentindex] == "s" and rows[currentrow][currentindex+1] == "w":
+                currrenttile[0] -= 1.0
+                currrenttile[1] += 0.5
+                currentindex += 2
+            elif rows[currentrow][currentindex] == "n" and rows[currentrow][currentindex+1] == "w":
+                currrenttile[0] += 1.0
+                currrenttile[1] += 0.5
+                currentindex += 2
+            elif rows[currentrow][currentindex] == "n" and rows[currentrow][currentindex+1] == "e":
+                currrenttile[0] += 1.0
+                currrenttile[1] -= 0.5
+                currentindex += 2
+        if str(currrenttile[0])+","+str(currrenttile[1]) in floor.keys():
+            floor[str(currrenttile[0])+","+str(currrenttile[1])] = not floor[str(currrenttile[0])+","+str(currrenttile[1])]
+        else:
+            floor[str(currrenttile[0])+","+str(currrenttile[1])] = False
+        currentrow += 1 
+        currentindex = 0
 
-first = clock_dict[1]
-second = clock_dict[clock_dict[1]]
+    for _ in range(100):
+        white = set()
+        newdict = {}
+        for k,v in floor.items():
+            if v == False:
+                key = [float(k.split(",")[0]),float(k.split(",")[1])]
+                tmpvalue, tmpset = flipper(floor, key, False)
+                newdict[str(key[0])+","+str(key[1])] = tmpvalue
+                white |= tmpset
+        for w in white:
+            key = [float(w.split(",")[0]),float(w.split(",")[1])]
+            tmpvalue = flipper(floor, key, True)
+            newdict[w] = tmpvalue
+        floor = deepcopy(newdict)
+    print(sum(1 for v in floor.values() if v == False))
 
-print(first * second)
+
+part2()

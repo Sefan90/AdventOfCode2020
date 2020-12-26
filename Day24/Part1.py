@@ -38,4 +38,3 @@ def part1():
         currentindex = 0
     print(sum(1 for v in floor.values() if v == False))
 part1()
-#12 fel
