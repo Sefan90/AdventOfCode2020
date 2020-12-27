@@ -1,4 +1,30 @@
 import collections
+
+class Tile:
+    def __init__(self, imagetile):
+        self.image = imagetile
+        self.update()
+
+    def update(self):
+        self.right = "".join([i[-1:]for i in self.image])
+        self.left = "".join([i[:1]for i in self.image])
+        self.bottom = self.image[-1]
+        self.top = self.image[0]
+
+    def items(self):
+        return self.top, self.right, self.bottom, self.left
+    
+    def rotate(self):
+        self.image = [''.join(reversed(row)) for row in zip(*self.image)]
+        self.update()
+    
+    def flip(self):
+        tmp = []
+        for row in self.image:
+            tmp.append(reversed(row))
+        self.image = tmp
+        self.update()
+
 file = open("testinput.txt","r").readlines()
 tiledict = {}
 matchdict = collections.defaultdict(list)
@@ -9,14 +35,8 @@ for row in file:
     if "Tile" in row:
         currentkey = row[5:].replace(":","").replace("\n","")
         imagetile = []
-    elif row == "\n":
-        tmpdict = {}
-        tmpdict["T"] = imagetile[0]
-        tmpdict["B"] = imagetile[-1]
-        tmpdict["R"] = "".join([i[-1:]for i in imagetile])
-        tmpdict["L"] = "".join([i[:1]for i in imagetile])
-        tmpdict["I"] = imagetile   
-        tiledict[currentkey] = tmpdict
+    elif row == "\n":  
+        tiledict[currentkey] = Tile(imagetile)
     else:
         imagetile += [row.replace("\n","")]
 for key, value in tiledict.items():
@@ -65,7 +85,7 @@ while currentTile not in tilelist:
                     currentTile = item[1]
                     tmprow = imagerow
                     for t in tiledict[currentTile]["I"]:
-                        image[tmprow] += " " + t
+                         [tmprow] += " " + t
                         tmprow += 1
                 elif item[0] == "T":
                     godown = False
