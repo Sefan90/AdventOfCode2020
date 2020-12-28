@@ -76,7 +76,7 @@ for k, v in tile_dct.items():
             if k == k2:
                 continue
             for side2 in v2.get_sides():
-                flipped_side2 = side2[len(side2)::-1]
+                flipped_side2 = ''.join(reversed(side2)) #side2[len(side2)::-1]
                 if flipped_side2 == side:
                     matches[k].update({k2 : side2})
                 elif side2 == side:
@@ -104,18 +104,24 @@ for counter in range(15):
             down_side = start_corner_sides[2]
             break
     if counter == 4:
-        tile_dct[start_corner].flipper()
+        tile_dct[start_corner].h_flipper()
     elif counter == 8:
-        tile_dct[start_corner].flipper()
+        tile_dct[start_corner].h_flipper()
         tile_dct[start_corner].rotate()
     elif counter == 9:
-        tile_dct[start_corner].flipper()
+        tile_dct[start_corner].h_flipper()
     else:
         tile_dct[start_corner].rotate()
 
-for k,v in tile_dct.items():
-    print(k)
-    print(v.get_content())
+#for k,v in tile_dct.items():
+#    print(k)
+#    print(v.get_content())
+
+for k, v in matches.items():
+    if len(v.keys()) <= 2: 
+        print(k)    
+        print(v)
+        print(tile_dct[k].get_sides())
 
 #Find our next piece and rotate it correctly towards our previous piece
 prev_piece = start_corner
@@ -174,21 +180,16 @@ while True:
     #Check if we've reached corner
     if len([k for k,v in matches.get(prev_piece).items() if v == right_side or v == ''.join(reversed(right_side))]) == 0:
         prev_piece = start_corner
-        #if len([k for k,v in matches.get(prev_piece).items() if v == down_side or v == ''.join(reversed(down_side))]) != 0:
-        
-        for image_line in image:
-            print(image_line)
-        print("LOL")
-
-        print(matches.get(prev_piece).items())
-        print(tile_dct.get(prev_piece).get_sides())
-        print(down_side)
-        curr_piece = [k for k,v in matches.get(prev_piece).items() if v == down_side or v == ''.join(reversed(down_side))][0]
-        start_corner = curr_piece
-        right_side = tile_dct[prev_piece].get_sides()[2]
-        corner = True
-        #else:
-        #    break
+        if len([k for k,v in matches.get(prev_piece).items() if v == down_side or v == ''.join(reversed(down_side))]) != 0:
+            print(matches.get(prev_piece).items())
+            print(tile_dct.get(prev_piece).get_sides())
+            print(down_side)
+            curr_piece = [k for k,v in matches.get(prev_piece).items() if v == down_side or v == ''.join(reversed(down_side))][0]
+            start_corner = curr_piece
+            right_side = tile_dct[prev_piece].get_sides()[2]
+            corner = True
+        else:
+            break
     else:
         prev_piece = curr_piece
         right_side = tile_dct[prev_piece].get_sides()[1]
@@ -245,10 +246,17 @@ while sea_mosters_found == 0:
         elif count == 8:
             tmp_img.v_flipper()
             image = tmp_img.get_content()
+        elif count == 12:
+            tmp_img.h_flipper()
+            tmp_img.v_flipper()
+            image = tmp_img.get_content()
+        elif count == 100:
+            break
 
 print(hashtags)
 print(hashtags - (sea_mosters_found*sea_monster_size))
 #too low 1324
+#to high 3628
 
 for image_line in image:
     print(image_line)
