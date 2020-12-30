@@ -1,3 +1,5 @@
+import time
+start_time = time.time()
 import collections
 
 data = open("input.txt").read().split("\n")
@@ -98,8 +100,8 @@ for counter in range(15):
     start_corner_sides = tile_dct[start_corner].get_sides()
     if start_corner_sides[1] in [one, two, ''.join(reversed(one)), ''.join(reversed(two))]:
         if start_corner_sides[2] in [one, two, ''.join(reversed(one)), ''.join(reversed(two))]:
-            image = tile_dct[start_corner].get_content()
-            #image = tile_dct[start_corner].get_content_without_sides()
+            #image = tile_dct[start_corner].get_content()
+            image = tile_dct[start_corner].get_content_without_sides()
             right_side = start_corner_sides[1]
             down_side = start_corner_sides[2]
             break
@@ -113,9 +115,9 @@ for counter in range(15):
     else:
         tile_dct[start_corner].rotate()
 
-#for k,v in tile_dct.items():
-#    print(k)
-#    print(v.get_content())
+for k,v in tile_dct.items():
+    print(k)
+    print(v.get_sides())
 
 for k, v in matches.items():
     if len(v.keys()) <= 2: 
@@ -163,15 +165,15 @@ while True:
     if corner:
         #image.append("")
         line = len(image)
-        for tile_line in tile_dct[curr_piece].get_content():
-        #for tile_line in tile_dct[curr_piece].get_content_without_sides():
+        #for tile_line in tile_dct[curr_piece].get_content():
+        for tile_line in tile_dct[curr_piece].get_content_without_sides():
             image.append(tile_line)
         down_side = tile_dct[curr_piece].get_sides()[2]
         corner = False
         pieces_added += 1
     else:
-        for num, tile_line in enumerate(tile_dct[curr_piece].get_content()):
-        #for num, tile_line in enumerate(tile_dct[curr_piece].get_content_without_sides()):
+        #for num, tile_line in enumerate(tile_dct[curr_piece].get_content()):
+        for num, tile_line in enumerate(tile_dct[curr_piece].get_content_without_sides()):
             image[line + num] += tile_line
         pieces_added += 1
 
@@ -257,6 +259,7 @@ print(hashtags)
 print(hashtags - (sea_mosters_found*sea_monster_size))
 #too low 1324
 #to high 3628
+#to high 4777
 
 for image_line in image:
     print(image_line)
@@ -271,3 +274,4 @@ for image_line in image:
 print(hashtags)
 print(len(tile_dct.keys()))
 print(pieces_added)
+print("--- %s seconds ---" % (time.time() - start_time))
